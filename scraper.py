@@ -3,6 +3,7 @@ from urllib.request import Request, urlopen
 import re
 import pandas as pd
 from pymongo import MongoClient
+from config import CONNECTION_STRING
 
 url = "https://bulletin.engin.umich.edu/courses/eecs/"
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
@@ -29,6 +30,7 @@ def parse_elements(para, ele):
         start_index = para.find(ele[i]) + len(ele[i])
         end_index = para.find(ele[i + 1])
         
+
         # Check if there's text between <em> elements
         if start_index < end_index:
             text = ele[start_index:end_index].strip()
@@ -41,7 +43,7 @@ def parse_para():
         # Find strong and em elements within the current paragraph
         strong_elements = paragraph.find_all('strong')
         em_elements = paragraph.find_all('em')
-        
+
         if strong_elements and em_elements:
             strong_text = ' '.join(strong.text.strip() for strong in strong_elements)
             print(strong_text)
@@ -75,11 +77,8 @@ def parse_para():
                 'credits': credits
             }
             # print(course)
-        
             collection.insert_one(course)
 
         # print("\n")
 parse_para()
 client.close()
-
-
