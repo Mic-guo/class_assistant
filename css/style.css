@@ -1,6 +1,6 @@
 h1{
     text-align: center;
-    font-size:large
+    font-size:x-large;
 }
 
 p{
@@ -12,13 +12,22 @@ body{
 }
 
 #classInput {
-    padding: 5px;
+    padding: 8px;
     margin-right: 5px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
 }
 
 #addClassBtn {
-    padding: 5px 10px;
+    padding: 8px 16px;
     cursor: pointer;
+    border: 1px solid #4c5baf;
+    border-radius: 5px;
+    background-color: rgb(61, 76, 188);
+    color: white;
+    font-size: 14px;
 }
 
 #classList {
