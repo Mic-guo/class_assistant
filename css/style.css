@@ -1,0 +1,36 @@
+h1{
+    text-align: center;
+    font-size:large
+}
+
+p{
+    font-size: medium;
+}
+
+body{
+    background-color: white;
+}
+
+#classInput {
+    padding: 5px;
+    margin-right: 5px;
+}
+
+#addClassBtn {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#classList {
+    list-style-type: none;
+    padding: 0;
+    color: black;
+}
+
+#classList li {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+}
