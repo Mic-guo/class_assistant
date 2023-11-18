@@ -40,7 +40,14 @@ function prereqData() {
 
         prereqList.innerHTML = '';
         var listItems = document.createElement('li');
-        listItems.textContent = "The prerequisites for " + prereqs + " are [XYZ]. You have completed [XYZ]. You still need to complete [XYZ].";
+
+        listItems.appendChild(document.createTextNode("The prerequisites for " + prereqs + " are [XYZ]. You have completed [XYZ]. You still need to complete [XYZ]."));
+        listItems.appendChild(document.createElement('br'));
+        listItems.appendChild(document.createTextNode("Grade Distribution: "));
+        listItems.appendChild(document.createElement('br'));
+        listItems.appendChild(document.createTextNode("Exams: "));
+        listItems.appendChild(document.createElement('br'));
+        listItems.appendChild(document.createTextNode("Workload: "));
 
         var prereqList = document.getElementById('prereqList');
         prereqList.appendChild(listItems);
