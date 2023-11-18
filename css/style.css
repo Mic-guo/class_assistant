@@ -11,7 +11,7 @@ body{
     background-color: white;
 }
 
-#classInput {
+#classInput, #prereqInput {
     padding: 8px;
     margin-right: 5px;
     width: 200px;
@@ -20,7 +20,7 @@ body{
     font-size: 14px;
 }
 
-#addClassBtn {
+#addClassBtn, #addPrereqBtn {
     padding: 8px 16px;
     cursor: pointer;
     border: 1px solid #4c5baf;

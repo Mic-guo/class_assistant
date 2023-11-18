@@ -27,3 +27,25 @@ function removeSkill(classItem) {
 }
 
 document.querySelector("#addClassBtn").addEventListener("click", addClass);
+
+
+
+function prereqData() {
+    var prereqInput = document.getElementById('prereqInput');
+    var prereqs = prereqInput.value.trim();
+
+    if (prereqs !== '') {
+        
+        var prereqList = document.getElementById('prereqList');
+
+        prereqList.innerHTML = '';
+        var listItems = document.createElement('li');
+        listItems.textContent = "The prerequisites for " + prereqs + " are [XYZ]. You have completed [XYZ]. You still need to complete [XYZ].";
+
+        var prereqList = document.getElementById('prereqList');
+        prereqList.appendChild(listItems);
+
+        prereqInput.value = '';
+    }
+}
+document.querySelector("#addPrereqBtn").addEventListener("click", prereqData);
