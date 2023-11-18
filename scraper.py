@@ -15,7 +15,6 @@ html_bytes = response.read()
 html = html_bytes.decode("utf-8")
 # print(html) 
 
-CONNECTION_STRING = "mongodb+srv://mickeyg:MHACKS2023@classbot.69pids3.mongodb.net/"
 client = MongoClient(CONNECTION_STRING)
 db = client['course_database'] # name here
 collection = db['course_collection']  # collection name here
@@ -36,6 +35,37 @@ def parse_elements(para, ele):
             text = ele[start_index:end_index].strip()
             ele.insert(text, i)
     return ele
+
+def extract_prerequisite_codes(text):
+    # Define a regular expression pattern to match course codes
+    code_pattern = re.compile(r'([A-Z]+\s\d{3}|\b\d{3}\b)')
+
+    # Identify if it's a prerequisite or accompanied code based on keywords
+    prerequisite_keywords = ['Prerequisite']
+    preceded_accompanied_keywords = ['Preceded or accompanied by']
+
+    prereq_codes = []
+    accompanied_codes = []
+
+    # Check for advisory prerequisites
+    if any(keyword in text for keyword in prerequisite_keywords):
+        # Extract prerequisite codes within the same sentence
+        sentence = text.split('.')
+        for s in sentence:
+            if any(keyword in s for keyword in prerequisite_keywords):
+                prereq_matches = code_pattern.findall(s)
+                prereq_codes.extend(prereq_matches)
+
+    # Check for preceded or accompanied by
+    if any(keyword in text for keyword in preceded_accompanied_keywords):
+        # Extract accompanied code within the same sentence
+        sentence = text.split('.')
+        for s in sentence:
+            if any(keyword in s for keyword in preceded_accompanied_keywords):
+                accompanied_matches = code_pattern.findall(s)
+                accompanied_codes.extend(accompanied_matches)
+
+    return prereq_codes, accompanied_codes
 
 # Iterate through each paragraph
 def parse_para():
@@ -67,11 +97,15 @@ def parse_para():
             enf_match = re.search(r"Enforced Prerequisite:\s*(.*?)\.", em_text)
             enforced_text = enf_match.group(1).strip() if enf_match else None
 
-
+            prereq_codes, accompanied_codes = extract_prerequisite_codes(em_text)
+            # print(prereq_codes, accompanied_codes)
+            
             course = {
                 'code': strong_text.split('.')[0],
                 'name': strong_text,
                 'prereq': em_text,
+                'prereq_codes': prereq_codes,
+                'accompanied_codes': accompanied_codes,
                 'advisory': advisory_text if advisory_text else None,
                 'enforced': enforced_text if enforced_text else None,
                 'credits': credits
