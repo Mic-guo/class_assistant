@@ -1,6 +1,13 @@
 document.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
-        addClass();
+        // Check if the active element is the classInput field
+        if (document.activeElement === document.getElementById('classInput')) {
+            addClass();
+        }
+        // Check if the active element is the prereqInput field
+        else if (document.activeElement === document.getElementById('prereqInput')) {
+            prereqData();
+        }
     }
 });
 
