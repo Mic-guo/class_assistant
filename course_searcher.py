@@ -1,3 +1,4 @@
+#app.py
 from pymongo import MongoClient
 from config import CONNECTION_STRING
 import re
@@ -11,7 +12,7 @@ def get_todo_courses():
     client = MongoClient(CONNECTION_STRING)
     db = client['course_database'] # name here
     collection = db['course_collection']  # collection name here
-
+    print(collection)
     completed_courses = [code.strip() for code in completed_courses_str.split(',')]
     desired_course_code = re.search(r'([A-Z]+\s\d{3})', desired_course_str).group(1)
     desired_course_data = collection.find_one({"code": desired_course_code})
@@ -47,4 +48,5 @@ desired_course_str = "EECS 280"
 completed_courses_str = "ENGR 100, EECS 189"
 
 todo_courses = get_todo_courses(desired_course_str, completed_courses_str)
-print_todo(todo_courses)
+print(print_todo(todo_courses))
+
