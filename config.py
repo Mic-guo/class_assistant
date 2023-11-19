@@ -1,0 +1,1 @@
+CONNECTION_STRING = "mongodb+srv://mickeyg:MHACKS2023@classbot.69pids3.mongodb.net/"
