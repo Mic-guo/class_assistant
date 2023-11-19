@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 from ics import Calendar, Event
 from ics.grammar.parse import ContentLine
 from course import Course
@@ -13,9 +14,10 @@ import re
 import json
 import arrow
 import os
+import time
+
 
 # TODO: check if Schedule Builder is offline for scheduled maintenance. It will return online at 7:30 AM.
-
 
 def document_initialised(driver):
     return driver.execute_script("return initialised")
@@ -23,13 +25,14 @@ def document_initialised(driver):
 
 def login(driver, uniqname, password):
     # TODO: prevent usage inside maintenence hours
-    login_button = WebDriverWait(driver, timeout=3).until(
+    login_button = WebDriverWait(driver, timeout=10).until(
         lambda d: d.find_element(by=By.LINK_TEXT, value="Log in"))
     if (login_button):
         print("Log in button found.")
+        login_button.click()
 
         uniqname_field = WebDriverWait(driver, timeout=3).until(
-            lambda d: d.find_element(by=By.ID, value="login"))
+            lambda d: d.find_element(by=By.ID, value="username"))
         password_field = WebDriverWait(driver, timeout=3).until(
             lambda d: d.find_element(by=By.ID, value="password"))
         weblogin_button = WebDriverWait(driver, timeout=3).until(
@@ -39,14 +42,23 @@ def login(driver, uniqname, password):
         password_field.send_keys(password)
         weblogin_button.click()
 
+        # <button tabindex="2" type="submit" class="positive auth-button"><!-- -->Send Me a Push </button>
+        # <div class="example class with spaces">This is the element with spaces</div>
+
         driver.switch_to.frame('duo_iframe')
         duo_button = WebDriverWait(driver, timeout=3).until(
             lambda d: d.find_element(by=By.CLASS_NAME, value="auth-button"))
+        duo_button = driver.find_element(By.CLASS_NAME, "auth-button")
         duo_button.click()
         print("Duo push sent to phone.")
+
+        time.sleep(15)
+        # try: 
+        driver.get("https://atlas.ai.umich.edu/my-dashboard/")
         WebDriverWait(driver, timeout=100).until(
             lambda d: d.find_element(by=By.CLASS_NAME, value="nav-bar-links"))
         print("Login successful.")
+
     else:
         print("Log in button not found.")
 
@@ -215,6 +227,93 @@ def create_calendar(courses, uniqname, term_start_date_string):
     print(f"\"{filename}\" exported")
     os.remove("temp_cal.txt")
 
+#    id="v-0-vue-combo-blocks-input"
+def get_course_statistics(driver, course):
+    search_bar = WebDriverWait(driver, timeout=10).until(
+        lambda d: d.find_element(by=By.ID, value="v-0-vue-combo-blocks-input"))
+    if (search_bar):
+        print("Search bar found")
+        search_bar.send_keys(course)
+        search_bar.send_keys(Keys.RETURN)
+
+        time.sleep(3)
+
+        # Course Evaluations 
+        print("### Course Evaluations #############################")
+        desireToTake = WebDriverWait(driver, timeout=3).until(
+            lambda d: d.find_element(By.CSS_SELECTOR, ".text-smed.eval-stat.desire-highlight")).text
+        understanding = WebDriverWait(driver, timeout=3).until(
+            lambda d: d.find_element(By.CSS_SELECTOR, ".text-smed.eval-stat.understanding-highlight")).text
+        workload = WebDriverWait(driver, timeout=3).until(
+            lambda d: d.find_element(By.CSS_SELECTOR, ".text-smed.eval-stat.workload-highlight")).text
+        expectations = WebDriverWait(driver, timeout=3).until(
+            lambda d: d.find_element(By.CSS_SELECTOR, ".text-smed.eval-stat.expectations-highlight")).text
+        increasedInterest = WebDriverWait(driver, timeout=3).until(
+            lambda d: d.find_element(By.CSS_SELECTOR, ".text-smed.eval-stat.increased-interest-highlight")).text
+        print("Desire to Take: " + desireToTake + "\n" + 
+              "Understanding: " + understanding + "\n" + 
+              "Workload: " + workload + "\n" + 
+              "Expectations: " + expectations + "\n" + 
+              "Increased Interest: " + increasedInterest)
+        
+        # Median Grade
+        print("### Median Grade ###################################")
+        medianGrade = driver.find_element(By.CLASS_NAME, "grade-median.text-smed.bold") \
+                            .find_element(By.CLASS_NAME, "blue-highlight-text").text
+        print (medianGrade)
+
+        # Incoming Student level
+        print("###  Incoming Student Level  #######################")
+        islElement = driver.find_element(By.ID, "student-level")
+
+        level_text = islElement.find_element(By.CLASS_NAME, 'yaxislayer-above') \
+                               .find_elements(By.CLASS_NAME, 'ytick')
+        text_contents = [element.text for element in level_text]
+
+        level_percents = islElement.find_element(By.CLASS_NAME, 'points') \
+                             .find_elements(By.CLASS_NAME, 'point')
+        num_contents = [element.text for element in level_percents]
+
+        islOutput = []
+        for level, percent in zip(text_contents[::-1], num_contents[::-1]):
+            islOutput.append(level)
+            islOutput.append(percent)
+
+        print(islOutput)
+
+        # Enrollment Sequence 
+        escElement = driver.find_element(By.CLASS_NAME, 'enrollment-sequence-container')
+
+        print("###  Classes Taken Before  #########################")
+        ctbElt = escElement.find_element(By.CSS_SELECTOR, '.pre.enrollment-container') \
+                           .find_elements(By.CLASS_NAME, 'text-small')
+                            #.find_element(By.CLASS_NAME, 'course-bookmark-container') \
+        weird_ctbText = [element.text for element in ctbElt]
+        ctbText = [s for s in weird_ctbText if s.strip() != ""]
+        print(ctbText[:-2])
+
+        print("###  Classes Taken With  ###########################")
+        ctwElt = escElement.find_element(By.CSS_SELECTOR, '.co.enrollment-container')\
+                           .find_elements(By.CLASS_NAME, 'text-small')
+        weird_ctwText = [element.text for element in ctwElt]
+        ctwText = [s for s in weird_ctwText if s.strip() != ""]
+        print(ctwText[:-2])
+
+        print("###  Classes Taken After  ##########################")
+        ctaElt = escElement.find_element(By.CSS_SELECTOR, '.post.enrollment-container')\
+                           .find_elements(By.CLASS_NAME, 'text-small')
+        weird_ctaText = [element.text for element in ctaElt]
+        ctaText = [s for s in weird_ctaText if s.strip() != ""]
+        print(ctaText[:-2])
+
+    #TODO: 
+        # print("###  School/College Affiliation  ###################")
+        # print("###  Declared Degrees ##############################")
+
+
+    else:
+        print("Search bar not found")
+    return None
 
 f = open('secret.json')
 data = json.load(f)
@@ -231,20 +330,28 @@ chrome_options.add_experimental_option(
 chrome_options.add_argument("--window-size=1920,1080")
 chrome_options.add_argument('--ignore-certificate-errors')
 chrome_options.add_argument('--allow-running-insecure-content')
-chrome_options.add_argument('--headless')
+chrome_options.add_argument("--enable-javascript")
+#chrome_options.add_argument('--headless')
 
-driver = webdriver.Chrome(service=ChromeService(
-    ChromeDriverManager().install()), options=chrome_options)
+service = Service(executable_path='/usr/bin/chromedriver')
 
-isProductionMode = 1
-if (isProductionMode):
-    driver.get("https://atlas.ai.umich.edu/")
-    login(driver, uniqname, password)
-    driver.get("https://atlas.ai.umich.edu/schedule-builder/")
-else:
-    driver.get(
-        r"C:\Users\k3vnx\Documents\GitHub\atlas-to-ics\testing\Atlas-schedule-builder-winter2023.html")
-courses = get_courses(driver, schedule_name)
+driver = webdriver.Chrome(service = service, options=chrome_options)
+
+driver.get("https://atlas.ai.umich.edu/")
+login(driver, uniqname, password)
+get_course_statistics(driver, "EECS 485")
+
+# isProductionMode = 1
+# if (isProductionMode):
+#     driver.get("https://atlas.ai.umich.edu/")
+#     login(driver, uniqname, password)
+
+#     driver.get("https://atlas.ai.umich.edu/schedule-builder/")
+# else:
+#     driver.get(
+#         r"C:\Users\k3vnx\Documents\GitHub\atlas-to-ics\testing\Atlas-schedule-builder-winter2023.html")
+# courses = get_courses(driver, schedule_name)
+# create_calendar(courses, uniqname, term_start_date)
+
 driver.quit()
 
-create_calendar(courses, uniqname, term_start_date)
