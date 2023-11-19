@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import re
-import pandas as pd
 from pymongo import MongoClient
 from config import CONNECTION_STRING
 
@@ -28,9 +27,9 @@ def parse_elements(para, ele):
         
         start_index = para.find(ele[i]) + len(ele[i])
         end_index = para.find(ele[i + 1])
-        
 
-        # Check if there's text between <em> elements
+        # Check if there's text between <em> 
+        
         if start_index < end_index:
             text = ele[start_index:end_index].strip()
             ele.insert(text, i)
@@ -53,8 +52,24 @@ def extract_prerequisite_codes(text):
         sentence = text.split('.')
         for s in sentence:
             if any(keyword in s for keyword in prerequisite_keywords):
-                prereq_matches = code_pattern.findall(s)
-                prereq_codes.extend(prereq_matches)
+                codes_in_sentence = code_pattern.findall(s)
+                inner_list = []
+                stored_word = ''
+
+                for code in codes_in_sentence:
+                    if ' ' in code:
+                        stored_word = code.split()[0]
+                        inner_list.append(code)
+                    else:
+                        inner_list.append(stored_word + ' ' + code)
+
+                    # Check for 'and' keyword or end of sentence to append the inner list
+                    if 'and' in code.lower():
+                        prereq_codes.append(inner_list.copy())
+                        inner_list.clear()
+                    elif code == codes_in_sentence[-1]:
+                        prereq_codes.append(inner_list.copy())
+
 
     # Check for preceded or accompanied by
     if any(keyword in text for keyword in preceded_accompanied_keywords):
@@ -62,8 +77,22 @@ def extract_prerequisite_codes(text):
         sentence = text.split('.')
         for s in sentence:
             if any(keyword in s for keyword in preceded_accompanied_keywords):
-                accompanied_matches = code_pattern.findall(s)
-                accompanied_codes.extend(accompanied_matches)
+                codes_in_sentence = code_pattern.findall(s)
+                inner_list = []
+
+                for code in codes_in_sentence:
+                    if ' ' in code:
+                        stored_word = code.split()[0]
+                        inner_list.append(stored_word)
+                    else:
+                        inner_list.append(stored_word + ' ' + code)
+
+                    # Check for 'and' keyword or end of sentence to append the inner list
+                    if 'and' in code.lower():
+                        accompanied_codes.append(inner_list.copy())
+                        inner_list.clear()
+                    elif code == codes_in_sentence[-1]:
+                        accompanied_codes.append(inner_list.copy())
 
     return prereq_codes, accompanied_codes
 
