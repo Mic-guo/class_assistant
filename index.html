@@ -9,26 +9,60 @@
 
 </head>
 <body>
-    <h1>University of Michigan Schedule Builder</h1>
+    <!-- <h1>University of Michigan Schedule Builder</h1> -->
 
-    <label for="classInput">Enter a class:</label>
+    <!-- <label for="classInput">Enter a class:</label>
     <input type="text" id="classInput">
-    <button  id="addClassBtn">Add Class</button>
+    <button  id="addClassBtn">Add Class</button> -->
+    <div class="firstPage">
+        <div style="display:flex; flex-direction: row; padding-top: 25vh; align-items: center; justify-content: center;">
+            <div class="container">
+                <h1>
+                    Find your next class
+                </h1>
+                <div class="search">
+                    <input type="text" placeholder="Enter your classes" id="classInput">
+                    <div>
+                        <svg>
+                            <use xlink:href="#path">
+                        </svg>
+                    </div>
+                </div>
+                <div class="classContainer" id="classContainer">
+                    <div>
+                        <h2 style="color: white; white-space: nowrap; padding-bottom: 20px">Classes List: </h2>
+                    </div>
+                    <ul id="classList"></ul>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                    <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 28" id="path">
+                        <path d="M32.9418651,-20.6880772 C37.9418651,-20.6880772 40.9418651,-16.6880772 40.9418651,-12.6880772 C40.9418651,-8.68807717 37.9418651,-4.68807717 32.9418651,-4.68807717 C27.9418651,-4.68807717 24.9418651,-8.68807717 24.9418651,-12.6880772 C24.9418651,-16.6880772 27.9418651,-20.6880772 32.9418651,-20.6880772 L32.9418651,-29.870624 C32.9418651,-30.3676803 33.3448089,-30.770624 33.8418651,-30.770624 C34.08056,-30.770624 34.3094785,-30.6758029 34.4782612,-30.5070201 L141.371843,76.386562" transform="translate(83.156854, 22.171573) rotate(-225.000000) translate(-83.156854, -22.171573)"></path>
+                    </symbol>
+                </svg>
+            </div>
+            <div class="container" style="position:absolute; right:0; width: 150px; height: 100vh">
+                <button id="next" style="position:absolute; height: 100vh"><span class="arrow">&#10230;</span></button>
+            </div>
+        </div>
 
-    <h2> Classes List: </h2>
-    <ul id="classList"></ul>
+        <div class="secondPage" style="padding-top: 50vh; padding-right: -60px; padding-bottom: 50vh">
+            <div class="container">
+                <br> 
+                <h2 style="color: white; font-size: x-large; font-family: 'Mukta Malar';">Based on your classes, we recommend you take the following courses next semester: </h2>
+                <br>
+                <div style="display: flex;">
+                    <label style="color: white; font-family: 'Mukta Malar'; display: flex; align-items: left" for="prereqInput">Enter a class to check if you meet the prerequisites for it: </label>
+                    <input style="color: white; font-family: 'Mukta Malar'; font-size: large;" type="text" id="prereqInput">
+                </div>
+                <button style="color: white; background-color:  #c74c71;" id="addPrereqBtn">Check</button>
+                <ul id="prereqList"></ul>
+            </div>
+        </div>
+        
+    </div>
 
-    <br> 
-    <h2>Based on your classes, we recommend you take the following courses next semester: </h2>
-    <br>
 
-    <label for="prereqInput">Enter a class to check if you meet the prerequisites for it: </label>
-    <input type="text" id="prereqInput">
-    <button id = "addPrereqBtn">Check</button>
-    <ul id="prereqList"></ul>
-
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src = "js/data.js"></script>
 </body>
 

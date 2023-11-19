@@ -1,12 +1,24 @@
-h1{
+/* Variables */
+:root {
+    --color: #fff;
+    }
+    
+h1 {
     text-align: center;
-    font-size:x-large;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size:50px;
+    font-family: 'Mukta Malar';
+    color: var(--color);
+    /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
     padding: 18px;
-    border: 4px solid rgb(73, 111, 194);
-
+    /* border: 4px solid rgb(73, 111, 194); */
     /* margin-right: 5px; */
     /* width: 200px; */
+    padding-bottom: 100px;
+}
+
+.search:focus-within h1 {
+    display: none; 
+    transition: opacity 0.5s;
 }
 
 p{
@@ -17,35 +29,203 @@ body{
     background: whitesmoke;
 }
 
-#classInput, #prereqInput {
+/* #classInput, #prereqInput {
     padding: 8px;
     margin-right: 5px;
     width: 200px;
     border: 1px solid #160505;
     border-radius: 5px;
     font-size: 14px;
-}
+} */
 
 #addClassBtn, #addPrereqBtn {
     padding: 8px 16px;
     cursor: pointer;
-    border: 1px solid #00274C;
+    /* border: 1px solid #00274C; */
     border-radius: 5px;
-    background-color: #00274C;
+    /* background-color: #00274C; */
     color: white;
     font-size: 14px;
+}
+
+#prereqList {
+    list-style-type: none;
+    padding: 0;
+    color: white;
+}
+
+#prereqList li{
+    display: inline-block;
+    color: #ffffff;
+    background-color: #d5597e;
+    padding: 7px;
+    margin: 5px;
+    border-radius: 5px;
 }
 
 #classList {
     list-style-type: none;
     padding: 0;
     color: black;
+
 }
 
 #classList li {
     display: inline-block;
-    background-color: #f0f0f0;
-    padding: 5px;
+    color: #ffffff;
+    background-color: #d5597e;
+    padding: 7px;
     margin: 5px;
     border-radius: 5px;
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.classContainer {
+    width: 400px;
+    display: flex;
+    align-items: left;
+}
+
+/* Search */
+.search {
+display: table;
+justify-content: center;
+align-items: center;
+width: auto;
+margin: auto;
+min-height: 100%;
+}
+
+.search input {
+background: none;
+border: none;
+outline: none;
+width: 28px;
+min-width: 0;
+padding: 0;
+z-index: 1;
+position: relative;
+line-height: 18px;
+margin: 5px 0;
+font-size: 14px;
+/* -webkit-appearance: none; */
+font-family: 'Mukta Malar';
+transition: all 0.6s ease;
+cursor: pointer;
+color: var(--color);
+}
+
+.search input + div {
+position: relative;
+height: 28px;
+width: 100%;
+margin: -28px 0 0 0;
+}
+
+.search input + div svg {
+display: block;
+position: absolute;
+height: 28px;
+width: 160px;
+right: 0;
+top: 0;
+fill: none;
+stroke: var(--color);
+stroke-width: 1.5px;
+stroke-dashoffset: calc(212.908 + 59);
+stroke-dasharray: 59 212.908;
+transition: all 0.6s ease;
+}
+
+.search input:not(:placeholder-shown),
+.search input:focus {
+width: 160px;
+padding: 0 4px;
+cursor: text;
+}
+
+.search input:not(:placeholder-shown) + div svg {
+stroke-dasharray: 150 212.908;
+stroke-dashoffset: 300;
+}
+
+.search input::placeholder {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.search input:focus::placeholder {
+    opacity: 0.8;
+}
+
+/* Text selection */
+::selection {
+background: rgba(255, 255, 255, 0.2);
+}
+
+::-moz-selection {
+background: rgba(255, 255, 255, 0.2);
+}
+
+/* Global styles */
+
+body {
+min-height: 100vh;
+font-family: 'Mukta Malar';
+/* background: #F3628D; */
+background: #F3628D;
+display: flex;
+justify-content: center;
+align-items: center; 
+/* overflow: hidden; */
+}
+
+#next {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    position: fixed;
+    top: 0; 
+    right: 0;
+    height: 100vh; 
+    cursor: pointer;
+    float: right;
+    /* top: 50%; */
+    width: 33vh;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 20px;
+    user-select: none;
+    right: 75px;
+    transition: 0.2s ease-in;
+    /* padding-right: 75px; Add padding to the right */
+  }
+  
+  #next:before {
+    font-family: 'Mukta Malar';
+    content:"Next";
+    position:absolute;
+    color:#ffffff;
+    right: 50%;
+    opacity: 0;
+    transition: 0.6s ease-in;
+    padding-right: 5px;
+  }
+  
+  #next:hover:before {
+    opacity: 1;
+  }
+  #next span {
+    display: inline-block;
+    transition: 0.6s ease-in;
+  }
+  #next:hover span {
+    transform: translateX(50%);
+  }

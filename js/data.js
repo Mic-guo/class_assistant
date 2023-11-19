@@ -1,3 +1,34 @@
+// Function to update the visibility of classContainer
+function updateClassContainerVisibility() {
+    var classContainer = document.getElementById('classContainer');
+    var classList = document.getElementById('classList');
+    var next = document.getElementById('next')
+    classContainer.style.display = classList.hasChildNodes() ? 'block' : 'none';
+    next.style.visibility = classList.hasChildNodes() ? 'visible' : 'hidden';
+
+}
+
+// Observer configuration
+var observerConfig = { childList: true };
+
+// Callback function to be called when mutations are observed
+var mutationCallback = function (mutationsList) {
+    for (var mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            // Update the visibility of classContainer on any change in child nodes
+            updateClassContainerVisibility();
+            break;
+        }
+    }
+};
+
+// Create a new observer with the callback and configuration
+var observer = new MutationObserver(mutationCallback);
+
+// Start observing the classList for changes
+observer.observe(document.getElementById('classList'), observerConfig);
+updateClassContainerVisibility();
+
 document.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         // Check if the active element is the classInput field
@@ -27,7 +58,6 @@ function addClass() {
         removeButton.addEventListener('click', function () {
             removeSkill(listItem);
         });
-
         listItem.appendChild(removeButton);
         classList.appendChild(listItem);
         classInput.value = '';
@@ -39,7 +69,7 @@ function removeSkill(classItem) {
     classList.removeChild(classItem);
 }
 
-document.querySelector("#addClassBtn").addEventListener("click", addClass);
+// document.querySelector("#addClassBtn").addEventListener("click", addClass);
 
 
 
@@ -69,3 +99,13 @@ function prereqData() {
     }
 }
 document.querySelector("#addPrereqBtn").addEventListener("click", prereqData);
+
+const btn = document.getElementById('next');
+const pixels = window.innerHeight;
+
+btn.addEventListener('click', () => {
+  window.scrollBy({
+    top: pixels,
+    behavior: 'smooth' 
+  });
+});
