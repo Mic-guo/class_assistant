@@ -1,8 +1,12 @@
 from pymongo import MongoClient
 from config import CONNECTION_STRING
 import re
+import flask
 
-def get_todo_courses(desired_course_str, completed_courses_str):
+@app.route('/get_prereq/', methods="post")
+def get_todo_courses():
+    desired_course_str = flask.request.form['desired_course_str']
+    completed_courses_str = flask.request.form['completed_courses_str']
     # Connect to MongoDB
     client = MongoClient(CONNECTION_STRING)
     db = client['course_database'] # name here

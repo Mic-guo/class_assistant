@@ -37,7 +37,7 @@ document.addEventListener("keydown", function (event) {
         }
         // Check if the active element is the prereqInput field
         else if (document.activeElement === document.getElementById('prereqInput')) {
-            prereqData();
+            getPrereqData();
         }
     }
 });
@@ -71,37 +71,81 @@ function removeSkill(classItem) {
 
 // document.querySelector("#addClassBtn").addEventListener("click", addClass);
 
-
-
-function prereqData() {
+function getPrereqData() {
     var prereqInput = document.getElementById('prereqInput');
     var prereqs = prereqInput.value.trim();
 
     if (prereqs !== '') {
-        
-        var prereqList = document.getElementById('prereqList');
+        // Assume you have a server endpoint like "/get_todo_courses"
+        var url = "/get_prereq/";
 
-        prereqList.innerHTML = '';
-        var listItems = document.createElement('li');
+        // You need to replace this with the actual completed_courses_str value
+        var completedCoursesStr = "EECS 280, EECS 183";
 
-        listItems.appendChild(document.createTextNode("The prerequisites for " + prereqs + " are [XYZ]. You have completed [XYZ]. You still need to complete [XYZ]."));
-        listItems.appendChild(document.createElement('br'));
-        listItems.appendChild(document.createTextNode("Grade Distribution: "));
-        listItems.appendChild(document.createElement('br'));
-        listItems.appendChild(document.createTextNode("Exams: "));
-        listItems.appendChild(document.createElement('br'));
-        listItems.appendChild(document.createTextNode("Workload: "));
-
-        var prereqList = document.getElementById('prereqList');
-        prereqList.appendChild(listItems);
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                desired_course_str: prereqs,
+                completed_courses_str: completedCoursesStr,
+            }),
+        })
+        .then(response => response.json())
+        .then(todoCourses => {
+            // Use the todoCourses data as needed
+            updatePrereqList(todoCourses);
+        })
+        .catch(error => console.error('Error:', error));
 
         prereqInput.value = '';
     }
 }
-document.querySelector("#addPrereqBtn").addEventListener("click", prereqData);
+
+function updatePrereqList(todoCourses) {
+    var prereqList = document.getElementById('prereqList');
+    prereqList.innerHTML = '';
+
+    var listItems = document.createElement('li');
+    // Assuming todoCourses is an array of course codes
+    listItems.appendChild(document.createTextNode("The prerequisites for " + prereqs + " are " + todoCourses.join(', ') + "."));
+
+    // Add more code to update the list with additional information
+
+    prereqList.appendChild(listItems);
+}
+
+document.querySelector("#addPrereqBtn").addEventListener("click", getPrereqData);
+
+// function prereqData() {
+//     var prereqInput = document.getElementById('prereqInput');
+//     var prereqs = prereqInput.value.trim();
+
+//     if (prereqs !== '') {
+        
+//         var prereqList = document.getElementById('prereqList');
+
+//         prereqList.innerHTML = '';
+//         var listItems = document.createElement('li');
+
+//         listItems.appendChild(document.createTextNode("The prerequisites for " + prereqs + " are [XYZ]. You have completed [XYZ]. You still need to complete [XYZ]."));
+//         listItems.appendChild(document.createElement('br'));
+//         listItems.appendChild(document.createTextNode("Grade Distribution: "));
+//         listItems.appendChild(document.createElement('br'));
+//         listItems.appendChild(document.createTextNode("Exams: "));
+//         listItems.appendChild(document.createElement('br'));
+//         listItems.appendChild(document.createTextNode("Workload: "));
+
+//         var prereqList = document.getElementById('prereqList');
+//         prereqList.appendChild(listItems);
+
+//         prereqInput.value = '';
+//     }
+// }
 
 const btn = document.getElementById('next');
-const pixels = window.innerHeight;
+const pixels = window.innerHeight + 1000;
 
 btn.addEventListener('click', () => {
   window.scrollBy({
